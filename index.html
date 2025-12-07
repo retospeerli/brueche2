@@ -59,9 +59,7 @@
       border-color: #1d4ed8;
       box-shadow: 0 5px 15px rgba(37,99,235,0.35);
     }
-    .choice-btn:active {
-      transform: translateY(1px);
-    }
+    .choice-btn:active { transform: translateY(1px); }
     .selected-info {
       font-size: 0.85rem;
       color: #6b7280;
@@ -83,9 +81,7 @@
       font-weight: 600;
       transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.2s ease;
     }
-    .primary-btn:hover {
-      background: #1d4ed8;
-    }
+    .primary-btn:hover { background: #1d4ed8; }
     .primary-btn:active {
       transform: translateY(1px);
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
@@ -178,9 +174,7 @@
       gap: 0.1rem;
       font-size: 1.4rem;
     }
-    .frac-top, .frac-bottom {
-      min-width: 3rem;
-    }
+    .frac-top, .frac-bottom { min-width: 3rem; }
     .frac-bar {
       width: 3.2rem;
       height: 0;
@@ -241,9 +235,7 @@
       transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.05s ease;
       margin-top: 0.4rem;
     }
-    .check-btn:hover {
-      background: #1d4ed8;
-    }
+    .check-btn:hover { background: #1d4ed8; }
     .check-btn:active {
       transform: translateY(1px);
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -457,12 +449,24 @@
   }
 
   function newQuestion() {
+    // alles visuell zurücksetzen
     feedback.textContent = '';
     feedback.className = 'feedback';
 
     decInput.value = '';
     numInput.value = '';
     denInput.value = '';
+
+    // gegebene Darstellungen ausblenden und leeren
+    givenFraction.classList.add('hidden');
+    givenDecimal.classList.add('hidden');
+    givenFracNum.textContent = '';
+    givenFracDen.textContent = '';
+    givenDecimal.textContent = '';
+
+    // Eingabebereiche ausblenden
+    answerDecimalWrapper.classList.add('hidden');
+    answerFractionWrapper.classList.add('hidden');
 
     // aktuellen Modus bestimmen
     if (modeChoice === 'mixed') {
@@ -471,26 +475,19 @@
       currentMode = modeChoice;
     }
 
-    // UI anpassen
     if (currentMode === 'br2dec') {
       modeLabel.textContent = 'Bruch → Dezimalzahl';
       givenTitle.textContent = 'Gegebener Bruch';
       answerTitle.textContent = 'Dezimalzahl eingeben';
       givenFraction.classList.remove('hidden');
-      givenDecimal.classList.add('hidden');
       answerDecimalWrapper.classList.remove('hidden');
-      answerFractionWrapper.classList.add('hidden');
-
       generateFractionTask();
     } else {
       modeLabel.textContent = 'Dezimalzahl → Bruch';
       givenTitle.textContent = 'Gegebene Dezimalzahl';
       answerTitle.textContent = 'Bruch eingeben';
-      givenFraction.classList.add('hidden');
       givenDecimal.classList.remove('hidden');
-      answerDecimalWrapper.classList.add('hidden');
       answerFractionWrapper.classList.remove('hidden');
-
       generateDecimalTask();
     }
 
@@ -512,41 +509,32 @@
 
   // Aufgabentyp: gegebener Bruch → Dezimalzahl
   function generateFractionTask() {
-    // wir wählen Brüche mit endlichem Dezimalbruch:
     const possibleDenoms = [2,4,5,8,10,20,25,40,50];
     const d = possibleDenoms[randomInt(0, possibleDenoms.length - 1)];
     let n = randomInt(1, d - 1);
-    // kürzen
     const g = gcd(n, d);
     targetNum = n / g;
     targetDen = d / g;
+    targetDecVal = targetNum / targetDen;
 
-    const val = targetNum / targetDen;
-    targetDecVal = val;
-
-    // Bruch anzeigen
     givenFracNum.textContent = targetNum;
     givenFracDen.textContent = targetDen;
   }
 
   // Aufgabentyp: gegebene Dezimalzahl → Bruch
   function generateDecimalTask() {
-    // wir wählen Dezimalzahlen mit 1–3 Nachkommastellen
     const decimals = [1,2,3];
     const k = decimals[randomInt(0, decimals.length - 1)];
     const scale = Math.pow(10, k);
-    const max = 9 * Math.pow(10, k - 1); // z.B. bei k=2: 90 → 0.10 bis 0.90
-    const raw = randomInt(1, max);       // nicht 0
+    const max = 9 * Math.pow(10, k - 1);
+    const raw = randomInt(1, max);
 
     const val = raw / scale;
     targetDecVal = val;
 
-    // Dezimalanzeige mit Komma
     targetDecText = val.toFixed(k).replace('.', ',');
     givenDecimal.textContent = targetDecText;
 
-    // "Referenz-Bruch" nur intern (zur Info oder Tipps)
-    // (nicht zwingend zur Korrektur nötig, wir vergleichen über Wert)
     const g = gcd(raw, scale);
     targetNum = raw / g;
     targetDen = scale / g;
@@ -567,7 +555,6 @@
       feedback.className = 'feedback error';
       return;
     }
-    // Komma/Punkt akzeptieren
     const norm = raw.replace(',', '.');
     const val = parseFloat(norm);
     if (isNaN(val)) {
@@ -610,7 +597,6 @@
       return;
     }
 
-    // Vergleich über Wertgleichheit, äquivalente Brüche sind erlaubt
     const valUser = num / den;
     const valTarget = targetDecVal;
 
@@ -622,7 +608,6 @@
       setTimeout(newQuestion, 700);
     } else {
       wrongAnswers++;
-      // kleiner Tipp mit einem möglichen gekürzten Bruch
       const k = fractionFromDecimal(valTarget);
       feedback.textContent =
         `Noch nicht ganz. Ein möglicher gekürzter Bruch wäre ${k.n}/${k.d}.`;
@@ -649,7 +634,6 @@
   }
 
   function fractionFromDecimal(val) {
-    // wir gehen davon aus, dass val max. 3 Nachkommastellen hat
     const s = val.toString();
     let decimals = 0;
     const dotIndex = s.indexOf('.');
@@ -663,7 +647,6 @@
     return { n: n / g, d: scale / g };
   }
 
-  // Init
   (function init() {
     updateStartControls();
   })();
