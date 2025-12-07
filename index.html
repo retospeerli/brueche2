@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Brüche und Dezimalbrüche – 5./6. Klasse</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .app {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 2rem 2.5rem;
+      max-width: 760px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.6rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #4b5563;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+    }
+    .center { text-align: center; }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin: 1rem 0 0.5rem;
+    }
+    .choice-btn {
+      padding: 0.8rem 0.6rem;
+      border-radius: 16px;
+      border: 2px solid #d1d5db;
+      background: #f9fafb;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .choice-btn.selected {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1d4ed8;
+      box-shadow: 0 5px 15px rgba(37,99,235,0.35);
+    }
+    .choice-btn:active {
+      transform: translateY(1px);
+    }
+    .selected-info {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-align: center;
+      min-height: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .primary-btn {
+      margin-top: 0.9rem;
+      width: 100%;
+      padding: 0.7rem 1rem;
+      font-size: 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.2s ease;
+    }
+    .primary-btn:hover {
+      background: #1d4ed8;
+    }
+    .primary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .primary-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .secondary-btn {
+      margin-top: 0.4rem;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      cursor: pointer;
+      background: #f9fafb;
+      color: #111827;
+      font-weight: 500;
+      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .secondary-btn:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+    .secondary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .progress {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .feedback {
+      min-height: 1.4rem;
+      margin-top: 0.4rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .feedback.ok { color: #15803d; }
+    .feedback.error { color: #b91c1c; }
+
+    .hidden { display: none; }
+
+    .stats {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: #374151;
+      text-align: center;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.8rem;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin-top: 0.3rem;
+    }
+
+    .exercise-layout {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.6rem;
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .given-side, .answer-side {
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 0.4rem;
+    }
+
+    .fraction-display {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+      font-size: 1.4rem;
+    }
+    .frac-top, .frac-bottom {
+      min-width: 3rem;
+    }
+    .frac-bar {
+      width: 3.2rem;
+      height: 0;
+      border-top: 2px solid #111827;
+    }
+
+    .decimal-display {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .fraction-input {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+      margin-bottom: 0.3rem;
+    }
+    .frac-num, .frac-den {
+      width: 3.2rem;
+      height: 2.2rem;
+      border-radius: 10px;
+      border: 2px solid #d1d5db;
+      text-align: center;
+      font-size: 1.1rem;
+      background: #f9fafb;
+    }
+    .frac-num:focus, .frac-den:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.35);
+    }
+
+    .decimal-input {
+      width: 6rem;
+      height: 2.4rem;
+      border-radius: 10px;
+      border: 2px solid #d1d5db;
+      text-align: center;
+      font-size: 1.1rem;
+      background: #f9fafb;
+    }
+    .decimal-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.35);
+    }
+
+    .check-btn {
+      padding: 0.45rem 1.4rem;
+      font-size: 0.95rem;
+      border-radius: 999px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.05s ease;
+      margin-top: 0.4rem;
+    }
+    .check-btn:hover {
+      background: #1d4ed8;
+    }
+    .check-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .finish-wrapper {
+      margin-top: 0.8rem;
+      text-align: center;
+    }
+    .finish-info {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-bottom: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>Brüche in Dezimalbrüche umwandeln</h1>
+  <div class="subtitle">
+    Wähle, ob du von Brüchen zu Dezimalzahlen oder umgekehrt rechnen willst.<br>
+    Brüche mit Zähler/Nenner, Dezimalzahlen mit Punkt <strong>oder</strong> Komma eingeben.
+  </div>
+
+  <!-- Start -->
+  <div id="start-screen">
+    <div class="center">
+      <p><strong>Aufgabentyp wählen:</strong></p>
+    </div>
+    <div class="choice-grid" id="mode-grid">
+      <button type="button" class="choice-btn mode-btn" data-mode="br2dec">Bruch → Dezimalzahl</button>
+      <button type="button" class="choice-btn mode-btn" data-mode="dec2br">Dezimalzahl → Bruch</button>
+      <button type="button" class="choice-btn mode-btn" data-mode="mixed">Gemischt</button>
+    </div>
+    <div class="selected-info" id="selected-info"></div>
+    <button class="primary-btn" id="start-btn" disabled>Los!</button>
+  </div>
+
+  <!-- Übung -->
+  <div id="quiz-screen" class="hidden">
+    <div class="progress" id="progress-text">
+      Richtig gelöste Aufgaben: <span id="stat-correct">0</span> (mindestens 10 für „Aufgabe beenden“)
+    </div>
+    <div class="center">
+      <div class="tag" id="mode-label"></div>
+    </div>
+
+    <div class="exercise-layout">
+      <!-- linke Seite: gegebene Zahl -->
+      <div class="given-side">
+        <div class="section-title" id="given-title"></div>
+        <!-- Bruchanzeige -->
+        <div id="given-fraction" class="fraction-display hidden">
+          <div id="given-frac-num" class="frac-top"></div>
+          <div class="frac-bar"></div>
+          <div id="given-frac-den" class="frac-bottom"></div>
+        </div>
+        <!-- Dezimalanzeige -->
+        <div id="given-decimal" class="decimal-display hidden"></div>
+      </div>
+
+      <!-- rechte Seite: Eingabe -->
+      <div class="answer-side">
+        <div class="section-title" id="answer-title"></div>
+
+        <!-- Eingabe Dezimalzahl -->
+        <div id="answer-decimal-wrapper" class="center hidden">
+          <input type="text" id="dec-input" class="decimal-input" placeholder="z.B. 0,75">
+        </div>
+
+        <!-- Eingabe Bruch -->
+        <div id="answer-fraction-wrapper" class="center hidden">
+          <div class="fraction-input">
+            <input type="text" id="num-input" class="frac-num" placeholder="Zähler">
+            <div class="frac-bar"></div>
+            <input type="text" id="den-input" class="frac-den" placeholder="Nenner">
+          </div>
+        </div>
+
+        <button type="button" class="check-btn" id="check-btn">Prüfen</button>
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="stats">
+      Richtig: <span id="stat-correct-2">0</span><br>
+      Falsche Versuche: <span id="stat-wrong">0</span>
+    </div>
+
+    <div class="finish-wrapper">
+      <div class="finish-info">
+        Nach mindestens 10 richtig gelösten Aufgaben kannst du die Aufgabe beenden.
+      </div>
+      <button class="secondary-btn hidden" id="finish-btn">Aufgabe beenden</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const REQUIRED_CORRECT = 10;
+
+  let modeChoice = null;      // 'br2dec' | 'dec2br' | 'mixed'
+  let currentMode = 'br2dec'; // aktueller Aufgabentyp
+  let correctAnswers = 0;
+  let wrongAnswers = 0;
+
+  // aktuelle Zielwerte
+  let targetNum = 0;
+  let targetDen = 1;
+  let targetDecVal = 0;
+  let targetDecText = '';
+
+  // DOM
+  const startScreen = document.getElementById('start-screen');
+  const quizScreen = document.getElementById('quiz-screen');
+
+  const modeGrid = document.getElementById('mode-grid');
+  const modeButtons = modeGrid.querySelectorAll('.mode-btn');
+  const selectedInfo = document.getElementById('selected-info');
+  const startBtn = document.getElementById('start-btn');
+
+  const progressText = document.getElementById('progress-text');
+  const modeLabel = document.getElementById('mode-label');
+
+  const givenTitle = document.getElementById('given-title');
+  const givenFraction = document.getElementById('given-fraction');
+  const givenFracNum = document.getElementById('given-frac-num');
+  const givenFracDen = document.getElementById('given-frac-den');
+  const givenDecimal = document.getElementById('given-decimal');
+
+  const answerTitle = document.getElementById('answer-title');
+  const answerDecimalWrapper = document.getElementById('answer-decimal-wrapper');
+  const answerFractionWrapper = document.getElementById('answer-fraction-wrapper');
+
+  const decInput = document.getElementById('dec-input');
+  const numInput = document.getElementById('num-input');
+  const denInput = document.getElementById('den-input');
+  const checkBtn = document.getElementById('check-btn');
+
+  const feedback = document.getElementById('feedback');
+  const statCorrect = document.getElementById('stat-correct');
+  const statCorrect2 = document.getElementById('stat-correct-2');
+  const statWrong = document.getElementById('stat-wrong');
+  const finishBtn = document.getElementById('finish-btn');
+
+  // Modus-Auswahl
+  modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const m = btn.getAttribute('data-mode');
+      modeChoice = (modeChoice === m) ? null : m;
+      modeButtons.forEach(b =>
+        b.classList.toggle('selected', b.getAttribute('data-mode') === modeChoice)
+      );
+      updateStartControls();
+    });
+  });
+
+  function updateStartControls() {
+    if (!modeChoice) {
+      selectedInfo.textContent = 'Bitte einen Aufgabentyp wählen.';
+      startBtn.disabled = true;
+      return;
+    }
+    let txt = '';
+    if (modeChoice === 'br2dec') txt = 'Bruch → Dezimalzahl';
+    else if (modeChoice === 'dec2br') txt = 'Dezimalzahl → Bruch';
+    else txt = 'Gemischt (abwechselnd)';
+    selectedInfo.textContent = 'Ausgewählt: ' + txt;
+    startBtn.disabled = false;
+  }
+
+  startBtn.addEventListener('click', startTraining);
+
+  finishBtn.addEventListener('click', () => {
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(
+          {
+            type: 'lv_task_done',
+            status: 'completed',
+            correct: correctAnswers
+          },
+          '*'
+        );
+      }
+    } catch (e) {
+      console.warn('Senden an Parent fehlgeschlagen:', e);
+    }
+    feedback.textContent = 'Aufgabe als erledigt markiert. ✅';
+    feedback.className = 'feedback ok';
+  });
+
+  function startTraining() {
+    if (!modeChoice) return;
+
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    statCorrect.textContent = '0';
+    statCorrect2.textContent = '0';
+    statWrong.textContent = '0';
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+
+    finishBtn.classList.add('hidden');
+
+    startScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+
+    newQuestion();
+  }
+
+  function newQuestion() {
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+
+    decInput.value = '';
+    numInput.value = '';
+    denInput.value = '';
+
+    // aktuellen Modus bestimmen
+    if (modeChoice === 'mixed') {
+      currentMode = Math.random() < 0.5 ? 'br2dec' : 'dec2br';
+    } else {
+      currentMode = modeChoice;
+    }
+
+    // UI anpassen
+    if (currentMode === 'br2dec') {
+      modeLabel.textContent = 'Bruch → Dezimalzahl';
+      givenTitle.textContent = 'Gegebener Bruch';
+      answerTitle.textContent = 'Dezimalzahl eingeben';
+      givenFraction.classList.remove('hidden');
+      givenDecimal.classList.add('hidden');
+      answerDecimalWrapper.classList.remove('hidden');
+      answerFractionWrapper.classList.add('hidden');
+
+      generateFractionTask();
+    } else {
+      modeLabel.textContent = 'Dezimalzahl → Bruch';
+      givenTitle.textContent = 'Gegebene Dezimalzahl';
+      answerTitle.textContent = 'Bruch eingeben';
+      givenFraction.classList.add('hidden');
+      givenDecimal.classList.remove('hidden');
+      answerDecimalWrapper.classList.add('hidden');
+      answerFractionWrapper.classList.remove('hidden');
+
+      generateDecimalTask();
+    }
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    statCorrect.textContent = correctAnswers.toString();
+    statCorrect2.textContent = correctAnswers.toString();
+    statWrong.textContent = wrongAnswers.toString();
+
+    progressText.textContent =
+      `Richtig gelöste Aufgaben: ${correctAnswers} (mindestens ${REQUIRED_CORRECT} für „Aufgabe beenden“)`;
+
+    if (correctAnswers >= REQUIRED_CORRECT) {
+      finishBtn.classList.remove('hidden');
+    }
+  }
+
+  // Aufgabentyp: gegebener Bruch → Dezimalzahl
+  function generateFractionTask() {
+    // wir wählen Brüche mit endlichem Dezimalbruch:
+    const possibleDenoms = [2,4,5,8,10,20,25,40,50];
+    const d = possibleDenoms[randomInt(0, possibleDenoms.length - 1)];
+    let n = randomInt(1, d - 1);
+    // kürzen
+    const g = gcd(n, d);
+    targetNum = n / g;
+    targetDen = d / g;
+
+    const val = targetNum / targetDen;
+    targetDecVal = val;
+
+    // Bruch anzeigen
+    givenFracNum.textContent = targetNum;
+    givenFracDen.textContent = targetDen;
+  }
+
+  // Aufgabentyp: gegebene Dezimalzahl → Bruch
+  function generateDecimalTask() {
+    // wir wählen Dezimalzahlen mit 1–3 Nachkommastellen
+    const decimals = [1,2,3];
+    const k = decimals[randomInt(0, decimals.length - 1)];
+    const scale = Math.pow(10, k);
+    const max = 9 * Math.pow(10, k - 1); // z.B. bei k=2: 90 → 0.10 bis 0.90
+    const raw = randomInt(1, max);       // nicht 0
+
+    const val = raw / scale;
+    targetDecVal = val;
+
+    // Dezimalanzeige mit Komma
+    targetDecText = val.toFixed(k).replace('.', ',');
+    givenDecimal.textContent = targetDecText;
+
+    // "Referenz-Bruch" nur intern (zur Info oder Tipps)
+    // (nicht zwingend zur Korrektur nötig, wir vergleichen über Wert)
+    const g = gcd(raw, scale);
+    targetNum = raw / g;
+    targetDen = scale / g;
+  }
+
+  checkBtn.addEventListener('click', () => {
+    if (currentMode === 'br2dec') {
+      checkBr2Dec();
+    } else {
+      checkDec2Br();
+    }
+  });
+
+  function checkBr2Dec() {
+    const raw = decInput.value.trim();
+    if (!raw) {
+      feedback.textContent = 'Bitte gib eine Dezimalzahl ein.';
+      feedback.className = 'feedback error';
+      return;
+    }
+    // Komma/Punkt akzeptieren
+    const norm = raw.replace(',', '.');
+    const val = parseFloat(norm);
+    if (isNaN(val)) {
+      feedback.textContent = 'Das ist keine gültige Zahl. Punkt oder Komma sind erlaubt.';
+      feedback.className = 'feedback error';
+      return;
+    }
+
+    const correctVal = targetNum / targetDen;
+    if (Math.abs(val - correctVal) < 1e-6) {
+      correctAnswers++;
+      feedback.textContent = 'Richtig! 👍';
+      feedback.className = 'feedback ok';
+      updateProgress();
+      setTimeout(newQuestion, 700);
+    } else {
+      wrongAnswers++;
+      feedback.textContent =
+        `Noch nicht ganz. Tipp: ${targetNum} : ${targetDen} = ${correctVal.toString().replace('.', ',')}`;
+      feedback.className = 'feedback error';
+      updateProgress();
+    }
+  }
+
+  function checkDec2Br() {
+    const numStr = numInput.value.trim();
+    const denStr = denInput.value.trim();
+
+    const num = parseInt(numStr, 10);
+    const den = parseInt(denStr, 10);
+
+    if (isNaN(num) || isNaN(den)) {
+      feedback.textContent = 'Bitte gib Zähler und Nenner als ganze Zahlen ein.';
+      feedback.className = 'feedback error';
+      return;
+    }
+    if (den === 0) {
+      feedback.textContent = 'Der Nenner darf nicht 0 sein.';
+      feedback.className = 'feedback error';
+      return;
+    }
+
+    // Vergleich über Wertgleichheit, äquivalente Brüche sind erlaubt
+    const valUser = num / den;
+    const valTarget = targetDecVal;
+
+    if (Math.abs(valUser - valTarget) < 1e-6) {
+      correctAnswers++;
+      feedback.textContent = 'Richtig! 👍';
+      feedback.className = 'feedback ok';
+      updateProgress();
+      setTimeout(newQuestion, 700);
+    } else {
+      wrongAnswers++;
+      // kleiner Tipp mit einem möglichen gekürzten Bruch
+      const k = fractionFromDecimal(valTarget);
+      feedback.textContent =
+        `Noch nicht ganz. Ein möglicher gekürzter Bruch wäre ${k.n}/${k.d}.`;
+      feedback.className = 'feedback error';
+      updateProgress();
+    }
+  }
+
+  // Hilfsfunktionen
+
+  function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b !== 0) {
+      const t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function fractionFromDecimal(val) {
+    // wir gehen davon aus, dass val max. 3 Nachkommastellen hat
+    const s = val.toString();
+    let decimals = 0;
+    const dotIndex = s.indexOf('.');
+    if (dotIndex >= 0) {
+      decimals = s.length - dotIndex - 1;
+      if (decimals > 3) decimals = 3;
+    }
+    const scale = Math.pow(10, decimals);
+    const n = Math.round(val * scale);
+    const g = gcd(n, scale);
+    return { n: n / g, d: scale / g };
+  }
+
+  // Init
+  (function init() {
+    updateStartControls();
+  })();
+</script>
+</body>
+</html>
