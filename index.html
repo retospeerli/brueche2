@@ -128,7 +128,7 @@
     .feedback.ok { color: #15803d; }
     .feedback.error { color: #b91c1c; }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
     .stats {
       margin-top: 0.8rem;
@@ -449,7 +449,7 @@
   }
 
   function newQuestion() {
-    // alles visuell zurücksetzen
+    // alles zurücksetzen
     feedback.textContent = '';
     feedback.className = 'feedback';
 
@@ -457,14 +457,17 @@
     numInput.value = '';
     denInput.value = '';
 
-    // gegebene Darstellungen ausblenden und leeren
+    // gegebene Darstellungen zurücksetzen
     givenFraction.classList.add('hidden');
     givenDecimal.classList.add('hidden');
     givenFracNum.textContent = '';
     givenFracDen.textContent = '';
     givenDecimal.textContent = '';
+    // Sicherheitshalber auch display direkt setzen
+    givenFraction.style.display = 'none';
+    givenDecimal.style.display = 'none';
 
-    // Eingabebereiche ausblenden
+    // Eingabe-Bereiche ausblenden
     answerDecimalWrapper.classList.add('hidden');
     answerFractionWrapper.classList.add('hidden');
 
@@ -479,15 +482,29 @@
       modeLabel.textContent = 'Bruch → Dezimalzahl';
       givenTitle.textContent = 'Gegebener Bruch';
       answerTitle.textContent = 'Dezimalzahl eingeben';
+
       givenFraction.classList.remove('hidden');
+      givenFraction.style.display = 'inline-flex';
+      givenDecimal.classList.add('hidden');
+      givenDecimal.style.display = 'none';
+
       answerDecimalWrapper.classList.remove('hidden');
+      answerFractionWrapper.classList.add('hidden');
+
       generateFractionTask();
     } else {
       modeLabel.textContent = 'Dezimalzahl → Bruch';
       givenTitle.textContent = 'Gegebene Dezimalzahl';
       answerTitle.textContent = 'Bruch eingeben';
+
       givenDecimal.classList.remove('hidden');
+      givenDecimal.style.display = 'block';
+      givenFraction.classList.add('hidden');
+      givenFraction.style.display = 'none'; // wichtig: Bruch + Bruchstrich weg
+
       answerFractionWrapper.classList.remove('hidden');
+      answerDecimalWrapper.classList.add('hidden');
+
       generateDecimalTask();
     }
 
@@ -507,7 +524,7 @@
     }
   }
 
-  // Aufgabentyp: gegebener Bruch → Dezimalzahl
+  // Bruch → Dezimalzahl
   function generateFractionTask() {
     const possibleDenoms = [2,4,5,8,10,20,25,40,50];
     const d = possibleDenoms[randomInt(0, possibleDenoms.length - 1)];
@@ -521,7 +538,7 @@
     givenFracDen.textContent = targetDen;
   }
 
-  // Aufgabentyp: gegebene Dezimalzahl → Bruch
+  // Dezimalzahl → Bruch
   function generateDecimalTask() {
     const decimals = [1,2,3];
     const k = decimals[randomInt(0, decimals.length - 1)];
